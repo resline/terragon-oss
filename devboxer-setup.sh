@@ -1,7 +1,7 @@
 #!/bin/bash
 # devboxer-setup.sh
 # Main setup script for DevBoxer environment
-# Optimized: runs project deps and Claude Code setup in parallel
+# Optimized: runs project deps, Claude Code, and Codex CLI setup in parallel
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -10,17 +10,17 @@ echo "       DevBoxer Environment Setup       "
 echo "========================================"
 echo
 
-# Run both setup scripts in parallel
-"${SCRIPT_DIR}/devboxer_scripts/install-project-deps.sh" &
+# Run setup scripts in parallel
+bash "${SCRIPT_DIR}/devboxer_scripts/install-project-deps.sh" &
 DEPS_PID=$!
 
-"${SCRIPT_DIR}/devboxer_scripts/install-claude-sandbox.sh" &
+bash "${SCRIPT_DIR}/devboxer_scripts/install-claude-sandbox.sh" &
 CLAUDE_PID=$!
 
-"${SCRIPT_DIR}/devboxer_scripts/install-codex-multi-agent.sh" &
+bash "${SCRIPT_DIR}/devboxer_scripts/install-codex-latest.sh" &
 CODEX_PID=$!
 
-# Wait for both to complete with explicit error handling
+# Wait for all to complete with explicit error handling
 DEPS_EXIT=0
 CLAUDE_EXIT=0
 CODEX_EXIT=0
@@ -37,7 +37,7 @@ if [ $CLAUDE_EXIT -ne 0 ]; then
     echo "WARNING: Claude Code setup had issues (exit code: $CLAUDE_EXIT)"
 fi
 if [ $CODEX_EXIT -ne 0 ]; then
-    echo "WARNING: Codex CLI multi-agent setup had issues (exit code: $CODEX_EXIT)"
+    echo "WARNING: Codex CLI setup had issues (exit code: $CODEX_EXIT)"
 fi
 
 echo "========================================"
